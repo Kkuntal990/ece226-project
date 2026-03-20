@@ -112,5 +112,5 @@ Each method is evaluated with three scopes:
 ## Contributors
 
 - **Kuntal Kokate**
-- **Aidan**
-- **Manasvin**
+- **Aidan Manternach**
+- **Manasvin Surya B J**
