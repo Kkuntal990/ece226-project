@@ -4,7 +4,7 @@
   "model_size_gb": 2.6636,
   "peak_vram_gb": 11.1823,
   "bits_per_param": 13.8359,
-  "perplexity": null,
+  "perplexity": 10.156994819641113,
   "gsm8k_accuracy": null,
-  "arc_accuracy": 0.648
+  "arc_accuracy": 0.642
 }

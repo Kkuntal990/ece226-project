@@ -1,11 +1,11 @@
 {
   "dataset": "wikitext/wikitext-2-raw-v1",
   "split": "test",
-  "max_length": 2048,
-  "stride": 1024,
+  "max_length": 512,
+  "stride": 256,
   "num_tokens": 131072,
   "num_windows": 127,
-  "perplexity": 8.394947152101409,
+  "perplexity": 9.827102115562228,
   "elapsed_sec": 36.658324241638184,
   "elapsed_hms": "00:00:36",
   "peak_vram_gb": 6.337512969970703
