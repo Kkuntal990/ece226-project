@@ -1,0 +1,34 @@
+[
+  {
+    "method": "awq",
+    "variant": "baseline",
+    "kl_div": 9.981704351957887e-11,
+    "cosine_sim": 0.9999939799308777,
+    "top1_agreement": 1.0,
+    "top5_agreement": 1.0
+  },
+  {
+    "method": "awq",
+    "variant": "attn_only_quant",
+    "kl_div": 0.02440449595451355,
+    "cosine_sim": 0.9972355961799622,
+    "top1_agreement": 0.921875,
+    "top5_agreement": 0.9140625
+  },
+  {
+    "method": "awq",
+    "variant": "full_quant",
+    "kl_div": 0.08481375873088837,
+    "cosine_sim": 0.9910117387771606,
+    "top1_agreement": 0.86328125,
+    "top5_agreement": 0.85
+  },
+  {
+    "method": "awq",
+    "variant": "mlp_only_quant",
+    "kl_div": 0.06459508836269379,
+    "cosine_sim": 0.9935960173606873,
+    "top1_agreement": 0.8515625,
+    "top5_agreement": 0.87109375
+  }
+]

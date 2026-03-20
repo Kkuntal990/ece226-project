@@ -1,1 +1,1 @@
-{"method": "baseline", "variant": "baseline", "bytes_per_param_actual": 2.0, "ppl": 9.8207, "gsm8k": 0.55, "arc_challenge": 0.658, "score": 0.636426, "tok_s": 57.243537, "ms_per_token": 3.632984, "peak_vram_gb": 5.590814, "model_size": 2.88}
+{"method": "baseline", "variant": "baseline", "bytes_per_param_actual": 2.0000, "ppl": 9.820684491399966, "gsm8k": 0.58, "arc_challenge": 0.658, "score": 0.6424000000000001, "tok_s": 27.15180400774673, "ms_per_token": 36.83088590143223, "peak_vram_gb": 5.812623500823975}
