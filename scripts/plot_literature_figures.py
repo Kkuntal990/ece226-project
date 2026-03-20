@@ -140,7 +140,7 @@ sns.barplot(data=quant_df, x="Scope", y="VRAM(GB)", hue="Method",
             order=SCOPE_ORDER)
 ax.axhline(bl["VRAM(GB)"], color=METHOD_COLORS["Baseline (FP16)"],
            ls="--", lw=2, label=f'Baseline FP16 ({bl["VRAM(GB)"]:.1f} GB)')
-ax.set_ylabel("Peak VRAM (GB, ↓ better)")
+ax.set_ylabel("Peak VRAM (GB)")
 ax.set_xlabel("Quantization Scope")
 ax.set_title("Peak VRAM Usage by Method × Scope\n"
              "(RTN/SmoothQuant achieve lowest VRAM; GPTQ Attn-Only anomalously high)", fontsize=13)
