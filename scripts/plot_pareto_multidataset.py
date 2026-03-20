@@ -52,7 +52,6 @@ for _, r in df.iterrows():
 ax.set_xlabel("Model Size (GB)")
 ax.set_ylabel("ARC-Challenge Accuracy (%)")
 ax.set_title("Size vs. ARC-Challenge (↑)", fontsize=13)
-ax.invert_xaxis()
 
 # ── Panel 2: Size vs Perplexity (inverted — lower PPL is better, so flip y) ──
 ax = axes[1]
@@ -68,7 +67,6 @@ for _, r in df.iterrows():
 ax.set_xlabel("Model Size (GB)")
 ax.set_ylabel("Perplexity (WikiText-2)")
 ax.set_title("Size vs. Perplexity (↓)", fontsize=13)
-ax.invert_xaxis()
 ax.invert_yaxis()  # lower PPL = better = higher on chart
 
 # ── Panel 3: Size vs Throughput ──
@@ -85,7 +83,6 @@ for _, r in df.iterrows():
 ax.set_xlabel("Model Size (GB)")
 ax.set_ylabel("Throughput (tok/s)")
 ax.set_title("Size vs. Throughput (↑)", fontsize=13)
-ax.invert_xaxis()
 
 # ── Shared legend ──
 method_handles = [mlines.Line2D([], [], color=c, marker="o", linestyle="None",
@@ -100,7 +97,7 @@ fig.legend(handles=method_handles + scope_handles,
            bbox_to_anchor=(0.5, -0.02), frameon=True)
 
 fig.suptitle("Compression vs. Quality Trade-off Across Benchmarks\n"
-             "(Qwen2-1.5B — upper-left is ideal in each panel)",
+             "(Qwen2-1.5B — lower size with higher metric is ideal)",
              fontsize=15, y=1.02)
 plt.tight_layout()
 fig.savefig(OUTDIR / "fig12_pareto_multidataset.png", dpi=200, bbox_inches="tight")
@@ -152,11 +149,10 @@ for idx, r in df.iterrows():
         ax.scatter(size, val, s=130, color=method_color, marker="P",
                    edgecolors="black", linewidth=0.7, zorder=5, alpha=0.9)
 
-ax.set_xlabel("Model Size (GB) — ← more compressed", fontsize=12)
+ax.set_xlabel("Model Size (GB) — → more compressed", fontsize=12)
 ax.set_ylabel("Normalized Score (0–100, ↑ better)", fontsize=12)
 ax.set_title("Unified Compression vs. Quality: All Benchmarks\n"
              "(each metric normalized to 0–100; higher = better)", fontsize=14)
-ax.invert_xaxis()
 
 # Legends
 metric_handles = [mlines.Line2D([], [], color="gray", marker=mk, linestyle="None",

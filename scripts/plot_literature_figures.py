@@ -66,11 +66,10 @@ for thr_val, label in [(20, "20 tok/s"), (90, "90 tok/s"), (189, "189 tok/s")]:
 
 ax.legend(handles=method_handles + scope_handles, loc="lower right",
           fontsize=8, ncol=2, title="Method / Scope / Throughput")
-ax.set_xlabel("Model Size (GB) — ← more compressed", fontsize=12)
+ax.set_xlabel("Model Size (GB) — → more compressed", fontsize=12)
 ax.set_ylabel("ARC-Challenge Accuracy (%)", fontsize=12)
 ax.set_title("Compression–Accuracy–Throughput Trade-off\n"
-             "(bubble size ∝ throughput; upper-left is ideal)", fontsize=14)
-ax.invert_xaxis()
+             "(bubble size ∝ throughput; lower size + higher accuracy is ideal)", fontsize=14)
 plt.tight_layout()
 fig.savefig(OUTDIR / "fig14_bubble_pareto.png", dpi=200, bbox_inches="tight")
 fig.savefig(OUTDIR / "fig14_bubble_pareto.pdf", bbox_inches="tight")

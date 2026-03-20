@@ -270,11 +270,10 @@ for method, grp in pareto_df.groupby("method"):
                     (r["model_size_gb"], r["arc_pct"]),
                     textcoords="offset points", xytext=(6, 6), fontsize=7.5)
 
-ax.set_xlabel("Model Size (GB) — ← more compressed")
+ax.set_xlabel("Model Size (GB) — → more compressed")
 ax.set_ylabel("ARC-Challenge Accuracy (%)")
-ax.set_title("Compression vs. Accuracy Trade-off\n(Pareto front: upper-left is ideal)", fontsize=13)
+ax.set_title("Compression vs. Accuracy Trade-off\n(Pareto front: upper-right is ideal)", fontsize=13)
 ax.legend(title="Method", fontsize=9)
-ax.invert_xaxis()
 plt.tight_layout()
 fig.savefig(OUTDIR / "fig3_pareto_compression_accuracy.png", dpi=200, bbox_inches="tight")
 fig.savefig(OUTDIR / "fig3_pareto_compression_accuracy.pdf", bbox_inches="tight")
