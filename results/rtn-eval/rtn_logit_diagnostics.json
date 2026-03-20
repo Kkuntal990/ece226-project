@@ -1,0 +1,26 @@
+[
+  {
+    "method": "rtn",
+    "variant": "attn_only_quant",
+    "kl_div": 0.0009963740594685078,
+    "cosine_sim": 0.9998958110809326,
+    "top1_agreement": 0.986328125,
+    "top5_agreement": 0.976953125
+  },
+  {
+    "method": "rtn",
+    "variant": "full_quant",
+    "kl_div": 0.007468910422176123,
+    "cosine_sim": 0.9991234540939331,
+    "top1_agreement": 0.958984375,
+    "top5_agreement": 0.955859375
+  },
+  {
+    "method": "rtn",
+    "variant": "mlp_only_quant",
+    "kl_div": 0.007940741255879402,
+    "cosine_sim": 0.9991544485092163,
+    "top1_agreement": 0.9609375,
+    "top5_agreement": 0.95546875
+  }
+]
