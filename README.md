@@ -1,43 +1,67 @@
-# ECE 226 Project: Post-Training Quantization of LLMs
+# Post-Training Quantization of LLMs
 
-A comparative study of post-training quantization (PTQ) techniques applied to **Qwen2-1.5B**, evaluating the trade-offs between model compression, inference efficiency, and task accuracy across different quantization scopes.
+A comparative study of post-training quantization (PTQ) techniques applied to **Qwen2-1.5B**, evaluating trade-offs between model compression, inference efficiency, and task accuracy across different quantization methods and scopes.
 
 ## Project Overview
 
-Large Language Models are expensive to deploy due to their memory and compute requirements. This project benchmarks three popular PTQ methods — **SmoothQuant**, **GPTQ**, and **AWQ** — each applied at three granularity levels (full model, attention-only, MLP-only) to understand which layers are most sensitive to quantization and which technique offers the best accuracy-compression trade-off.
+Large Language Models are expensive to deploy due to their memory and compute requirements. This project benchmarks four PTQ methods — **RTN**, **GPTQ**, **SmoothQuant**, and **AWQ** — each applied at three granularity levels (full model, attention-only, MLP-only) to understand which layers are most sensitive to quantization and how different techniques navigate the accuracy–compression–speed trade-off.
 
-### Quantization Techniques
+### Methods
 
-| Technique | Precision | Description |
-|-----------|-----------|-------------|
-| **SmoothQuant** | W8A8 | Migrates quantization difficulty from activations to weights using a mathematically equivalent per-channel scaling transform. Uses calibration-driven smoothing (alpha=0.8). |
-| **GPTQ** | W4 (group_size=128) | Second-order weight quantization that uses approximate Hessian information to minimize layer-wise reconstruction error. |
-| **AWQ** | W4A16 (group_size=128) | Activation-Aware Weight Quantization that protects salient weight channels identified via activation magnitudes. |
+| Method | Precision | Approach |
+|--------|-----------|----------|
+| **RTN** | W8A16 | Round-to-nearest via bitsandbytes INT8. No calibration data required. |
+| **GPTQ** | W4 (group_size=128) | Second-order weight quantization using approximate Hessian information to minimize layer-wise reconstruction error. |
+| **SmoothQuant** | W8A8 | Migrates quantization difficulty from activations to weights via per-channel scaling (alpha=0.8). Quantizes both weights and activations. |
+| **AWQ** | W4A16 (group_size=128) | Activation-aware weight quantization that protects salient weight channels identified via activation magnitudes. |
 
 ### Quantization Scopes
 
-Each technique is tested with three variants:
-- **Full Quant** — All linear layers (attention + MLP) are quantized
-- **Attention-Only** — Only self-attention projections (Q, K, V, O) are quantized
-- **MLP-Only** — Only MLP projections (gate, up, down) are quantized
+Each method is evaluated with three scopes:
+- **Full** — All linear layers (attention + MLP) are quantized
+- **Attention-Only** — Only self-attention projections (Q, K, V, O)
+- **MLP-Only** — Only MLP projections (gate, up, down)
 
-### Evaluation Benchmarks
+### Evaluation
 
-- **Perplexity** — WikiText-2 test set (sliding window, stride=1024, max_length=2048)
-- **ARC-Challenge** — 500 samples from AI2 ARC-Challenge (multiple-choice science reasoning)
-- **GSM8K** — 300 samples, 8-shot chain-of-thought (math reasoning; GPTQ and AWQ notebooks only)
+- **ARC-Challenge** — 500 samples, 0-shot multiple-choice reasoning
+- **WikiText-2 Perplexity** — Sliding window evaluation (RTN/AWQ: max_length=512, stride=256; GPTQ/SmoothQuant: max_length=2048, stride=1024)
+- **GSM8K** — 8-shot chain-of-thought math reasoning (RTN: 300 samples, AWQ: 50 samples)
+- **Deployment metrics** — Throughput (tok/s), latency (ms/tok), peak VRAM, model size
 
-## Notebooks
+### Base Model
 
-| Notebook | Technique | Scope | Benchmarks |
-|----------|-----------|-------|------------|
-| `full_quant_smoothquant_ppl_arc.ipynb` | SmoothQuant W8A8 | Full model | Perplexity, ARC |
-| `attn_only_smoothquant_ppl_arc (1).ipynb` | SmoothQuant W8A8 | Attention-only | Perplexity, ARC |
-| `mlp_only_smoothquant_ppl_arc.ipynb` | SmoothQuant W8A8 | MLP-only | Perplexity, ARC |
-| `gptq_full_quant_gsm8k_arc_only (1).ipynb` | GPTQ W4 g128 | Full model | Perplexity, GSM8K, ARC |
-| `gptq_attn_only_quant_ppl_gsm8k_arc.ipynb` | GPTQ W4 g128 | Attention-only | Perplexity, GSM8K, ARC |
-| `gptq_mlp_only_quant_ppl_gsm8k_arc.ipynb` | GPTQ W4 g128 | MLP-only | Perplexity, GSM8K, ARC |
-| `02_awq_notebook.ipynb` | AWQ W4A16 g128 | All three + baseline | Perplexity, GSM8K, ARC, layer diagnostics |
+- **Model**: [Qwen/Qwen2-1.5B](https://huggingface.co/Qwen/Qwen2-1.5B)
+- **Architecture**: 28 transformer layers, hidden_size=1536, intermediate_size=8960, ~1.5B parameters
+- **Original precision**: BFloat16 (2.88 GB)
+
+## Repository Structure
+
+```
+├── notebooks/
+│   ├── rtn_eval.ipynb                  # RTN (W8A16) — all scopes + baseline
+│   ├── awq_eval.ipynb                  # AWQ (W4A16) — all scopes + baseline
+│   ├── gptq_full_eval.ipynb            # GPTQ (W4) — full model
+│   ├── gptq_attn_eval.ipynb            # GPTQ (W4) — attention-only
+│   ├── gptq_mlp_eval.ipynb             # GPTQ (W4) — MLP-only
+│   ├── smoothquant_full_eval.ipynb     # SmoothQuant (W8A8) — full model
+│   ├── smoothquant_attn_eval.ipynb     # SmoothQuant (W8A8) — attention-only
+│   ├── smoothquant_mlp_eval.ipynb      # SmoothQuant (W8A8) — MLP-only
+│   └── results_analysis.ipynb          # Cross-method analysis and visualization
+├── results/
+│   ├── baseline/                       # FP16 baseline evaluation
+│   ├── rtn-eval/                       # RTN results + layer diagnostics
+│   ├── awq-eval/                       # AWQ results + logit diagnostics
+│   ├── full_quant_results_only/        # GPTQ full results
+│   ├── attn_only_quant_results_only/   # GPTQ attn-only results
+│   ├── mlp_only_quant_results_only/    # GPTQ MLP-only results
+│   ├── smoothquant-eval/               # SmoothQuant results (all scopes)
+│   └── analysis/                       # Generated figures and tables
+├── scripts/
+│   ├── generate_analysis.py            # Generates all analysis figures
+│   ├── plot_literature_figures.py      # Literature-informed deployment plots
+│   └── plot_pareto_multidataset.py     # Multi-benchmark Pareto plots
+```
 
 ## How to Run
 
@@ -51,56 +75,42 @@ Each technique is tested with three variants:
 
 1. Upload the desired notebook to [Google Colab](https://colab.research.google.com/)
 2. Select a **GPU runtime** (Runtime > Change runtime type > T4 or L4)
-3. Run cells sequentially:
-   - **Cell 1**: Installs dependencies (`transformers`, `datasets`, `accelerate`, `gptqmodel` for GPTQ, `llm-compressor` for AWQ)
-   - **Cell 2**: Loads the base model, runs calibration (512 samples from WikiText-2 train), and quantizes
-   - **Cell 3+**: Evaluates perplexity, ARC-Challenge, and GSM8K (if applicable)
-   - **Final cell**: Prints summary metrics and saves result artifacts
+3. Run cells sequentially — each notebook handles dependency installation, model loading, quantization, and evaluation
+4. Results are saved as JSON/CSV artifacts in the notebook's output directory
 
 ### Notes
 
-- For GPTQ notebooks, restart the runtime once after the `pip install gptqmodel` cell, then re-run from the next cell
-- Each notebook is fully self-contained — no shared code files or external dependencies between notebooks
-- Calibration data: 512 samples from WikiText-2 train split, max_length=2048, seed=42
+- Each notebook is fully self-contained with no shared dependencies between them
+- For GPTQ notebooks, restart the runtime after the `pip install gptqmodel` cell, then re-run from the next cell
+- The `results_analysis.ipynb` notebook reads from `results/` and regenerates all figures
 
 ## Key Results
 
-### SmoothQuant (W8A8)
+### Cross-Method Comparison
 
-| Variant | Perplexity | ARC Accuracy | Artifact Size (GB) |
-|---------|-----------|--------------|-------------------|
-| Full Quant | 8.456 | 64.6% | 1.67 |
-| Attn-Only | 8.395 | 65.6% | 2.75 |
-| MLP-Only | 8.456 | 64.0% | 1.82 |
+| Method | Scope | Precision | ARC (%) | Size (GB) | VRAM (GB) | Throughput (tok/s) |
+|--------|-------|-----------|:-------:|:---------:|:---------:|:-----------------:|
+| Baseline (FP16) | Full | FP16 | 65.8 | 2.88 | 5.81 | 27.2 |
+| RTN | Full | W8A16 | 65.4 | 1.72 | 1.72 | 13.2 |
+| RTN | MLP-Only | W8A16 | 66.4 | 1.82 | 1.82 | 23.2 |
+| SmoothQuant | Attn-Only | W8A8 | 65.6 | 2.75 | 2.77 | 14.0 |
+| GPTQ | MLP-Only | W4 | 64.8 | 1.28 | 5.71 | 19.0 |
+| AWQ | MLP-Only | W4A16 | 63.4 | 1.12 | 6.49 | 12.3 |
 
-### GPTQ (W4, group_size=128)
+### Key Findings
 
-| Variant | Perplexity | ARC Accuracy | Model Size (GB) | Bits/Param |
-|---------|-----------|--------------|-----------------|-----------|
-| Full Quant | 8.895 | 61.8% | 1.07 | 5.56 |
-| Attn-Only | — | 64.8% | 2.66 | 13.84 |
-| MLP-Only | 8.577 | 64.8% | 1.28 | 6.66 |
+1. **Accuracy is broadly preserved across all methods.** ARC-Challenge scores span only 4.6 pp (61.8%–66.4%) despite compression ratios up to 2.7×. With 500 evaluation samples (95% CI ≈ ±4 pp), differences between 8-bit methods and the baseline are not statistically significant, while the gap for 4-bit full-model quantization is meaningful.
 
-### AWQ (W4A16, group_size=128)
+2. **MLP layers are the dominant source of quantization error.** RTN logit diagnostics show that Full and MLP-Only quantization produce nearly identical output degradation (KL divergence ~0.008), while Attn-Only preserves 98.6% top-1 agreement. This confirms that MLP layers — which hold ~70% of parameters in Qwen2's SwiGLU architecture — are harder to quantize.
 
-| Variant | Perplexity | ARC Accuracy | Peak VRAM (GB) |
-|---------|-----------|--------------|----------------|
-| Baseline (FP16) | 12.336 | 65.8% | 5.59 |
-| Full Quant | 13.017 | 62.6% | 6.38 |
-| Attn-Only | 12.545 | 64.0% | 5.71 |
-| MLP-Only | 12.682 | 63.4% | 6.28 |
+3. **No method achieves inference speed-up over the FP16 baseline.** Despite significant model compression, all quantized methods exhibit lower throughput than FP16 due to dequantization overhead and lack of optimized quantized kernels in the evaluation setup.
 
-### Key Takeaways
+4. **RTN and SmoothQuant achieve the best VRAM savings** (1.7–2.8 GB vs 5.8 GB baseline), while GPTQ and AWQ show higher VRAM than expected due to runtime dequantization buffers.
 
-1. **Attention layers are more robust to quantization than MLP layers.** Across all three techniques, attention-only quantization consistently preserves accuracy better than MLP-only or full quantization.
-2. **SmoothQuant (W8A8) delivers the best accuracy retention** with perplexity nearly identical to FP16, at the cost of less compression (8-bit vs 4-bit).
-3. **GPTQ provides the best compression ratio** with W4 quantization bringing the full model down to ~1 GB while maintaining reasonable accuracy (61.8% ARC).
-4. **MLP layers dominate model size** — quantizing only MLP layers achieves nearly as much compression as full quantization, since MLP parameters make up ~57% of total weights in Qwen2-1.5B.
-5. **AWQ layer diagnostics confirm** attention-only quantization has the highest cosine similarity (0.997) and lowest KL divergence (0.024) relative to the baseline, indicating minimal distribution shift.
+5. **Perplexity comparisons require matching evaluation configs.** RTN/AWQ use max_length=512, stride=256 while GPTQ/SmoothQuant use max_length=2048, stride=1024 — making cross-method PPL values not directly comparable.
 
-## Base Model
+## Contributors
 
-- **Model**: [Qwen/Qwen2-1.5B](https://huggingface.co/Qwen/Qwen2-1.5B)
-- **Architecture**: 28 transformer layers, hidden_size=1536, intermediate_size=8960
-- **Parameters**: ~1.5B
-- **Original precision**: BFloat16
+- **Kuntal Kokate**
+- **Aidan**
+- **Manasvin**
