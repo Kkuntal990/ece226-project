@@ -60,7 +60,7 @@ records.append({
     "precision": "FP16", "bits_per_param": 16.0,
     "ppl": bl.get("ppl"), "arc": bl.get("arc_challenge"),
     "gsm8k": bl.get("gsm8k"),
-    "model_size_gb": bl.get("model_size"),
+    "model_size_gb": bl.get("model_size", 2.88),
     "throughput_tps": bl.get("tok_s"),
     "latency_ms": bl.get("ms_per_token"),
     "peak_vram_gb": bl.get("peak_vram_gb"),
@@ -147,6 +147,22 @@ for var, d in sq_dirs.items():
     })
 
 df = pd.DataFrame(records)
+
+# Overwrite model sizes and deployment metrics from the curated comprehensive CSV
+comp_csv = OUTDIR / "table_comprehensive.csv"
+if comp_csv.exists():
+    comp = pd.read_csv(comp_csv)
+    SCOPE_MAP = {"Full": "full_quant", "Attn-Only": "attn_only", "MLP-Only": "mlp_only"}
+    COL_MAP = {"Size(GB)": "model_size_gb", "VRAM(GB)": "peak_vram_gb",
+               "Throughput": "throughput_tps", "Latency(ms)": "latency_ms"}
+    for _, cr in comp.iterrows():
+        var = SCOPE_MAP.get(cr["Scope"], cr["Scope"])
+        mask = (df["method"] == cr["Method"]) & (df["variant"] == var)
+        if mask.any():
+            for csv_col, df_col in COL_MAP.items():
+                if csv_col in cr and not pd.isna(cr[csv_col]):
+                    df.loc[mask, df_col] = cr[csv_col]
+
 # Convert arc from fraction to percentage
 df["arc_pct"] = df["arc"].apply(lambda x: x * 100 if x is not None and x <= 1 else x)
 df["gsm8k_pct"] = df["gsm8k"].apply(lambda x: x * 100 if x is not None and x <= 1 else x)
