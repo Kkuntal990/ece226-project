@@ -36,25 +36,44 @@ SCOPE_MARKERS = {
 # Each metric gets a different marker edge style; scopes get shapes; methods get colors
 # ═══════════════════════════════════════════════════════════════════════════
 
-fig, axes = plt.subplots(1, 3, figsize=(20, 7))
-
-# ── Panel 1: Size vs ARC-Challenge Accuracy ──
-ax = axes[0]
+# ═══════════════════════════════════════════════════════════════════════════
+# FIG 12a: Standalone ARC-Challenge scatter
+# ═══════════════════════════════════════════════════════════════════════════
+fig, ax = plt.subplots(figsize=(10, 7))
 for _, r in df.iterrows():
     if pd.isna(r["ARC%↑"]) or pd.isna(r["Size(GB)"]): continue
-    ax.scatter(r["Size(GB)"], r["ARC%↑"], s=140, zorder=5,
+    ax.scatter(r["Size(GB)"], r["ARC%↑"], s=160, zorder=5,
                color=METHOD_COLORS.get(r["Method"], "#333"),
                marker=SCOPE_MARKERS.get(r["Scope"], "o"),
                edgecolors="black", linewidth=0.8)
-    ax.annotate(r["Scope"][:4], (r["Size(GB)"], r["ARC%↑"]),
-                textcoords="offset points", xytext=(7, 5), fontsize=7)
+    ax.annotate(f'{r["Method"].split(" ")[0]}\n{r["Scope"]}',
+                (r["Size(GB)"], r["ARC%↑"]),
+                textcoords="offset points", xytext=(8, -8), fontsize=7.5, color="#444")
 
-ax.set_xlabel("Model Size (GB)")
-ax.set_ylabel("ARC-Challenge Accuracy (%)")
-ax.set_title("Size vs. ARC-Challenge (↑)", fontsize=13)
+method_handles = [mlines.Line2D([], [], color=c, marker="o", linestyle="None",
+                   markersize=10, markeredgecolor="black", label=m)
+                  for m, c in METHOD_COLORS.items()]
+scope_handles = [mlines.Line2D([], [], color="gray", marker=mk, linestyle="None",
+                  markersize=10, markeredgecolor="black", label=s)
+                 for s, mk in SCOPE_MARKERS.items()]
+ax.legend(handles=method_handles + scope_handles, fontsize=9, ncol=2, title="Method / Scope")
+ax.set_xlabel("Model Size (GB)", fontsize=12)
+ax.set_ylabel("ARC-Challenge Accuracy (%)", fontsize=12)
+ax.set_title("Model Size vs. ARC-Challenge Accuracy\n"
+             "(Qwen2-1.5B, 500 samples, 0-shot)", fontsize=14)
+plt.tight_layout()
+fig.savefig(OUTDIR / "fig12a_arc_vs_size.png", dpi=200, bbox_inches="tight")
+fig.savefig(OUTDIR / "fig12a_arc_vs_size.pdf", bbox_inches="tight")
+plt.close()
+print("Saved fig12a_arc_vs_size")
 
-# ── Panel 2: Size vs Perplexity (inverted — lower PPL is better, so flip y) ──
-ax = axes[1]
+# ═══════════════════════════════════════════════════════════════════════════
+# FIG 12: Perplexity + Throughput (2-panel)
+# ═══════════════════════════════════════════════════════════════════════════
+fig, axes = plt.subplots(1, 2, figsize=(16, 7))
+
+# ── Panel 1: Size vs Perplexity (inverted — lower PPL is better, so flip y) ──
+ax = axes[0]
 for _, r in df.iterrows():
     if pd.isna(r["PPL↓"]) or pd.isna(r["Size(GB)"]): continue
     ax.scatter(r["Size(GB)"], r["PPL↓"], s=140, zorder=5,
@@ -69,8 +88,8 @@ ax.set_ylabel("Perplexity (WikiText-2)")
 ax.set_title("Size vs. Perplexity (↓)", fontsize=13)
 ax.invert_yaxis()  # lower PPL = better = higher on chart
 
-# ── Panel 3: Size vs Throughput ──
-ax = axes[2]
+# ── Panel 2: Size vs Throughput ──
+ax = axes[1]
 for _, r in df.iterrows():
     if pd.isna(r["Throughput"]) or pd.isna(r["Size(GB)"]): continue
     ax.scatter(r["Size(GB)"], r["Throughput"], s=140, zorder=5,
@@ -96,8 +115,8 @@ fig.legend(handles=method_handles + scope_handles,
            loc="lower center", ncol=7, fontsize=10,
            bbox_to_anchor=(0.5, -0.02), frameon=True)
 
-fig.suptitle("Compression vs. Quality Trade-off Across Benchmarks\n"
-             "(Qwen2-1.5B — lower size with higher metric is ideal)",
+fig.suptitle("Compression vs. Perplexity & Throughput\n"
+             "(Qwen2-1.5B — lower size with better metric is ideal)",
              fontsize=15, y=1.02)
 plt.tight_layout()
 fig.savefig(OUTDIR / "fig12_pareto_multidataset.png", dpi=200, bbox_inches="tight")
