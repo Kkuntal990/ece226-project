@@ -1,2 +1,0 @@
-variant,compression,model_size_gb,peak_vram_gb,bits_per_param,perplexity,gsm8k_accuracy,arc_accuracy
-mlp_only_quant,GPTQ W4 g128,1.2827,7.9754,6.6632,8.576692317577685,,0.648

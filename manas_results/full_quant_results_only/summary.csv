@@ -1,2 +1,0 @@
-variant,compression,model_size_gb,peak_vram_gb,bits_per_param,gsm8k_accuracy,arc_accuracy
-full_quant,GPTQ W4 g128,1.0709,6.7565,5.5627,,0.618

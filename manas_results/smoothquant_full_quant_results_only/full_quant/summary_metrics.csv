@@ -1,2 +1,0 @@
-run_name,technique,variant,base_model,artifact_dir,artifact_size_gb,perplexity,arc_accuracy,artifact_zip,results_zip
-smoothquant_full_quant_ppl_arc,SmoothQuant,full_quant,Qwen/Qwen2-1.5B,/content/artifacts/smoothquant/full_quant,1.6736404476687312,8.455939540622788,0.646,/content/zip_bundles/smoothquant_full_quant_ppl_arc/full_quant/full_quant_artifact.zip,
