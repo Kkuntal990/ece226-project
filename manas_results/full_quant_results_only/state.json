@@ -1,0 +1,28 @@
+{
+  "quantization": {
+    "variant": "full_quant",
+    "base_model": "Qwen/Qwen2-1.5B",
+    "quant": {
+      "bits": 4,
+      "group_size": 128,
+      "desc_act": false
+    },
+    "artifact_dir": "/content/artifacts/gptq_w4_g128/full_quant",
+    "gptq_model_file": "model.safetensors",
+    "quantization_elapsed_sec": 985.466757774353,
+    "model_size_gb": 1.0709,
+    "bits_per_param": 5.5627,
+    "created_at_unix": 1773095624.8650641,
+    "zip_path": "/content/zip_bundles/gptq_w4_g128_full_quant/full_quant/full_quant_quantized_model.zip"
+  },
+  "arc_challenge": {
+    "dataset": "arc_challenge",
+    "num_samples": 500,
+    "max_new_tokens": 5,
+    "accuracy": 0.618,
+    "correct": 309,
+    "elapsed_sec": 186.3936107158661,
+    "elapsed_hms": "3:06",
+    "peak_vram_gb": 6.756505489349365
+  }
+}

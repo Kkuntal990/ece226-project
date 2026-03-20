@@ -1,0 +1,10 @@
+{
+  "variant": "attn_only_quant",
+  "compression": "GPTQ W4 g128",
+  "model_size_gb": 2.6636,
+  "peak_vram_gb": 11.1823,
+  "bits_per_param": 13.8359,
+  "perplexity": null,
+  "gsm8k_accuracy": null,
+  "arc_accuracy": 0.648
+}
