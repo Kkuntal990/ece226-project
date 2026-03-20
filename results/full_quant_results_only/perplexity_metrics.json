@@ -1,0 +1,9 @@
+{
+  "dataset": "wikitext/wikitext-2-raw-v1",
+  "split": "test",
+  "max_length": 2048,
+  "stride": 1024,
+  "num_tokens": 299078,
+  "num_windows": 292,
+  "perplexity": 8.89476490020752
+}

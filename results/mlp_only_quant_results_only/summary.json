@@ -1,0 +1,10 @@
+{
+  "variant": "mlp_only_quant",
+  "compression": "GPTQ W4 g128",
+  "model_size_gb": 1.2827,
+  "peak_vram_gb": 7.9754,
+  "bits_per_param": 6.6632,
+  "perplexity": 8.576692317577685,
+  "gsm8k_accuracy": null,
+  "arc_accuracy": 0.648
+}
