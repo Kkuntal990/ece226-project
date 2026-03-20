@@ -25,7 +25,7 @@ Each method is evaluated with three scopes:
 ### Evaluation
 
 - **ARC-Challenge** — 500 samples, 0-shot multiple-choice reasoning
-- **WikiText-2 Perplexity** — Sliding window evaluation (RTN/AWQ: max_length=512, stride=256; GPTQ/SmoothQuant: max_length=2048, stride=1024)
+- **WikiText-2 Perplexity** — Sliding window evaluation (max_length=512, stride=256)
 - **GSM8K** — 8-shot chain-of-thought math reasoning (RTN: 300 samples, AWQ: 50 samples)
 - **Deployment metrics** — Throughput (tok/s), latency (ms/tok), peak VRAM, model size
 
