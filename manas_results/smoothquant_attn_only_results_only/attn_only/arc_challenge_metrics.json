@@ -1,0 +1,10 @@
+{
+  "dataset": "arc_challenge",
+  "num_samples": 500,
+  "max_new_tokens": 5,
+  "accuracy": 0.656,
+  "correct": 328,
+  "elapsed_sec": 178.94690823554993,
+  "elapsed_hms": "00:02:58",
+  "peak_vram_gb": 2.772265911102295
+}

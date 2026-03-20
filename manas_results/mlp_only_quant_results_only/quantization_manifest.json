@@ -1,0 +1,18 @@
+{
+  "variant": "mlp_only_quant",
+  "base_model": "Qwen/Qwen2-1.5B",
+  "quant": {
+    "bits": 4,
+    "group_size": 128,
+    "desc_act": false
+  },
+  "dynamic_config": {
+    "-:.*self_attn\\.(q|k|v|o)_proj.*": {}
+  },
+  "artifact_dir": "/content/artifacts/gptq_w4_g128/mlp_only_quant",
+  "gptq_model_file": "model.safetensors",
+  "quantization_elapsed_sec": 818.4876461029053,
+  "model_size_gb": 1.2827,
+  "bits_per_param": 6.6632,
+  "created_at_unix": 1773116072.4020019
+}

@@ -1,0 +1,2 @@
+run_name,technique,variant,base_model,artifact_dir,artifact_size_gb,perplexity,arc_accuracy,artifact_zip,results_zip
+smoothquant_mlp_only_ppl_arc,SmoothQuant,mlp_only,Qwen/Qwen2-1.5B,/content/artifacts/smoothquant/mlp_only,1.8163832509890199,8.455800434103777,0.64,/content/zip_bundles/smoothquant_mlp_only_ppl_arc/mlp_only/mlp_only_artifact.zip,
